@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "515547231051",
+    "project_id": "secondgame202204",
+    "storage_bucket": "secondgame202204.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515547231051:android:b998ffc4aec8caf40f6ece",
+        "android_client_info": {
+          "package_name": "com.Shine.SecondGame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515547231051-g87e1m2khlj0mc7ccug4horivi9dbk9e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWQH7YANvm6c0lznGT4Eq_qYGhdoVlpCk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515547231051-g87e1m2khlj0mc7ccug4horivi9dbk9e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
