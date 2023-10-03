@@ -9,27 +9,24 @@ public class Fire : MonoBehaviour
 
     [Header("怪物倒退的距離值")]
     public float Dis;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    
 
-    // Update is called once per frame
     void Update()
     {
-
+        //弾を飛ばす
         transform.Translate(Vector3.right* Speed * Time.deltaTime);
     }
+
     void OnTriggerEnter(Collider hit)
     {
+        //弾の当たり判定
         if (hit.GetComponent<Collider>().tag == "NPC"|| hit.GetComponent<Collider>().tag == "BOSS")
         {
-            //NPC或BOSS扣血,false=普攻 true=大絕招
+            //NPC又はBOSSに当たったらダメージを加える,falseはNPC trueはBoss
             hit.GetComponent<Monster>().HurtMonster(false);
-            //NPC和BOSS被打到以後要往後退
+            ////NPC又はBOSSが攻撃を受けたら一定の距離に下がる
             hit.transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y, hit.transform.position.z + Dis);
-            //刪除普攻物件
+            //弾を消す
             Destroy(gameObject);
         }
     }

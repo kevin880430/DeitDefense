@@ -11,34 +11,38 @@ public class GM : MonoBehaviour
     public GameObject Boss;
     [Header("怪物生成的位置")]
     public GameObject CreatePos;
+    //モンスターを生成する間隔時間
     [Header("多少時間產生一個怪物")]
     public float SetTime;
+    //全モンスター数
     [Header("小怪在關卡內的總數量")]
     public float TotalNum;
-    //目前小怪產生的數量
+    //現在モンスターの数
     float Num;
-    //怪物死亡數量
+    //モンスター死亡数
     public float DeadNum;
-
+    //モンスターバー
     [Header("怪物條")]
     public Image NumBar;
-
+    //MPバー
     [Header("信仰條")]
     public Image MagicBar;
+    //MPバーをためる時間
     [Header("多少時間以後信仰條集滿")]
     public float SetAllTime;
-    //程式中計算信仰條時間
+    //プログラムで計算する時間
     float ScriptTime;
+    //スキルの画像素材
     [Header("大絕招的圖片")]
     public Image MagicImage;
-
+    //プレイヤーhp
     [Header("玩家的總血量")]
     public float PlayerTotalHP;
-    //程式中計算玩家的血量
+    //プログラムで計算するプレイヤーhp
     float PlayerScriptHP;
     [Header("玩家的血條")]
     public Image PlayerHPBar;
-
+    //一時停止画面
     [Header("遊戲暫停畫面")]
     public GameObject PauseUI;
     bool isPause;
@@ -53,51 +57,54 @@ public class GM : MonoBehaviour
     }
 
     void CreateNPC() {
-        //抓取NPC生成物件的Collider邊界最大值
+        //モンスター(NPC)を生成するオブジェクトのCollider最小値
         Vector3 MaxVector3 = CreatePos.GetComponent<Collider>().bounds.max;
-        //抓取NPC生成物件的Collider邊界最小值
+        //モンスター(NPC)を生成するオブジェクトのCollider最大値
         Vector3 MinVector3 = CreatePos.GetComponent<Collider>().bounds.min;
-        //隨機亂數產生怪物要生成的位置
+        //モンスター(NPC)を生成するオブジェクトの位置をランダムにする
         Vector3 RandomVector3 = new Vector3(Random.Range(MinVector3.x, MaxVector3.x), CreatePos.transform.position.y, CreatePos.transform.position.z);
-        //如果目前場景的怪物數量<一關總體數量
+        //現在のモンスター数は設定値より少ないなら
         if (Num < TotalNum) {
-            //動態生成小怪
+            //モンスターを生成する
             Instantiate(NPC, RandomVector3, CreatePos.transform.rotation);
-            //目前數量+1
+            //現在モンスター数+1
             Num++;
         }
     }
     // Update is called once per frame
     void Update()
     {
+        //モンスターバーとモンスターの数を一致させる
         NumBar.fillAmount = 1f - (DeadNum / TotalNum);
+        //全部のモンスターを倒したらBossを生成する
         if (NumBar.fillAmount == 0 && GameObject.FindGameObjectsWithTag("BOSS").Length <= 0) {
             Instantiate(Boss, CreatePos.transform.position, CreatePos.transform.rotation);
         }
-        //讓程式中的時間一直累加
+        //タイマーを足して
         ScriptTime += Time.deltaTime;
-        //如果程式計算的時間大於屬性面板中調整的時間值
+        //設定時間を達したら(MPは時間によって貯める)
         if (ScriptTime > SetAllTime)
         {
-            //大絕招的圖片顏色變為白色
+            //スキルボタンの色が変わる
             MagicImage.color = Color.white;
         }
-        //如果時間還沒滿大絕招圖片呈現灰色
+        //貯めていない時スキルボタンは灰色
         else {
             MagicImage.color = Color.gray;
         }
-        //時間顯示在信仰條上
+        //MPバーを貯める
         MagicBar.fillAmount = ScriptTime / SetAllTime;
     }
     public void Reset() {
+        //スキルを使ったらMPバーをリセット
         MagicBar.fillAmount = 0;
         ScriptTime = 0;
     }
 
     public void HurtPlayerHP(float hurt) {
-        //扣除玩家的血量
+        //プレイヤーのhpを減る
         PlayerScriptHP -= hurt;
-        //玩家血量條
+        //プレイヤーのhpバー
         PlayerHPBar.fillAmount = PlayerScriptHP / PlayerTotalHP;
         if (PlayerHPBar.fillAmount == 0) {
             GameObject.Find("GM").GetComponent<ControlUI>().GameOver(false);
@@ -105,6 +112,7 @@ public class GM : MonoBehaviour
     }
     public void Pause() {
         isPause = !isPause;
+        //一時停止機能
         if (isPause)
         {
             Time.timeScale = 0;
@@ -112,10 +120,12 @@ public class GM : MonoBehaviour
         else {
             Time.timeScale = 1;
         }
+        //一時停止画面を表示
         PauseUI.SetActive(isPause);
     }
 
     public void BackMenu() { 
+        //Menuに戻る時一時停止を解除
         Time.timeScale = 1;
         Application.LoadLevel("Menu");
     } 

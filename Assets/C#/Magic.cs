@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Magic : MonoBehaviour
 {
+    //モンスターが撃退される距離
     [Header("怪物倒退的距離值")]
     public float Dis;
     
@@ -11,14 +12,15 @@ public class Magic : MonoBehaviour
     {
         if (hit.GetComponent<Collider>().tag == "NPC" || hit.GetComponent<Collider>().tag == "BOSS")
         {
-            //NPC或BOSS扣血,false=普攻 true=大絕招
+            //NPC又はBOSSの当たり判定,false=一般攻撃 true=スキル
             hit.GetComponent<Monster>().HurtMonster(true);
-            //NPC和BOSS被打到以後要往後退
+            //NPC又はBOSSがプレイヤーの攻撃に撃たれたら一定の距離下がる　
             hit.transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y, hit.transform.position.z + Dis);
             GameObject.Find("GM").GetComponent<GM>().Reset();
-           //刪除大絕招父物件
+           //プレイヤーの攻撃(弾)を消す
            Destroy(transform.parent.gameObject);
         }
+            //スキルが地面に落ちたらMPをリセット
         if (hit.GetComponent<Collider>().name == "mazu_floor") {
             GameObject.Find("GM").GetComponent<GM>().Reset();
             Destroy(transform.parent.gameObject);

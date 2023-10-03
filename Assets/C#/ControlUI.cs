@@ -4,31 +4,39 @@ using UnityEngine;
 using UnityEngine.UI;
 public class ControlUI : MonoBehaviour
 {
+    //数字の画像素材
     [Header("數值0-9圖片")]
     public Sprite[] NumberSprite;
+    //レベルの画像素材
     [Header("遊戲畫面上的Level Image")]
     public Image[] GameLevelImages;
+    //ゲームオバーのレベルの画像素材
     [Header("遊戲結束畫面上的Level Image")]
     public Image[] GameOverLevelImages;
-
+    //スコア
     [Header("遊戲分數")]
     public int TotalScore;
+    //モンスターを倒したら得られる点数
     [Header("打死NPC的分數")]
     public int AddNPCScore;
+    ////Bossを倒したら得られる点数
     [Header("打死Boss的分數")]
     public int AddBossScore;
+    //スコアオブジェクト
     [Header("分數的物件")]
     public GameObject ScoreObj;
+    //スコアの親オブジェクト
     [Header("分數的父物件")]
     public GameObject ScoreParentObj;
+    //スコア画像プレハブ
     [Header("儲存產出的分數物件")]
     public List<GameObject> ScoreImagePrefab;
-
     [Header("遊戲結束的UI物件")]
     public GameObject GameOverUI;
+    //ボーナス点数
     [Header("獎勵分數")]
     public int AwardScore;
-    //判斷是否有獎勵分數
+    //ボーナス点数の判定
     bool isAward;
     [Header("獎勵分數的物件")]
     public GameObject AwardScoreObj;
@@ -38,72 +46,68 @@ public class ControlUI : MonoBehaviour
     public GameObject GameOverScoreObj;
     [Header("遊戲結束總分數的父物件")]
     public GameObject GameOverParentObj;
-    //跳動分數的起始值
+    //表示する点数の初期値
     int ScoreStartNum = 0;
-    //程式中計算的數值
+    //プログラムの中に点数の計算
     int ScoreResult;
-    //程式中要計算幾次(跳動次數)
+    //何回計算する(計算するの動画)
     int ScoreJump = 15;
-    //遊戲結束總分數
+    //最終的な点数
     int GameOverTotalScore;
-    //程式中的獎勵分數
+    //ボーナス点数
     int AwardScriptScore;
+    //ボーナス点数プレハブ
     [Header("儲存產出的獎勵分數物件")]
     public List<GameObject> AwardScoreImagePrefab;
+    //総点数プレハブ
     [Header("儲存產出的遊戲結束總分數物件")]
     public List<GameObject> TotalScoreImagePrefab;
-    // Start is called before the first frame update
     void Start()
     {
         ScoreObj.SetActive(false);
         GameOverScoreObj.SetActive(false);
         AwardScoreObj.SetActive(false);
-        //關卡數值長度<2，代表關卡數值介於1-9
+        //レベル数値<2，つまり範囲はレベル1-9
         if (StaticObj.LevelID.ToString().Length < 2) {
-            //Images陣列 ID 為0=十進位，ID 為1=個進位
+            //レベル画像[0]は10の位
             #region 遊戲場景裡面的Level
-            //十進位
+            //十の位
             GameLevelImages[0].sprite = NumberSprite[0];
-            //個進位,%代表取餘數
+            //一の位,%は余りを取る(ex:53だったら3を取る)
             GameLevelImages[1].sprite = NumberSprite[StaticObj.LevelID%10];
             #endregion
             #region 遊戲結束中的Level
-            //十進位
+            //十の位
             GameOverLevelImages[0].sprite = NumberSprite[0];
-            //個進位
-            //int.Parse將文字轉換成數值
-            //Substring取數值文字的位置
+            //一の位
+            //int.Parseは文字を数値化する
+            //Substring数値文字の位置を取る
             GameOverLevelImages[1].sprite = NumberSprite[int.Parse(StaticObj.LevelID.ToString().Substring(0,1))];
             #endregion
         }
-        //關卡數值長度>=2，代表關卡數值介於10-99
+        //レベル数値>=2，つまりレベル10-99
         else
         {
             #region 遊戲場景裡面的Level
-            //十進位
+            //十の位
             GameLevelImages[0].sprite = NumberSprite[StaticObj.LevelID / 10];
-            //個進位,%代表取餘數
+            //一の位,%は余りを取る(ex:53だったら3を取る)
             GameLevelImages[1].sprite = NumberSprite[StaticObj.LevelID % 10];
             #endregion
             #region 遊戲結束中的Level
-            //十進位
+            //十の位
             GameOverLevelImages[0].sprite = NumberSprite[int.Parse(StaticObj.LevelID.ToString().Substring(0, 1))];
-            //個進位
-            //int.Parse將文字轉換成數值
-            //Substring取數值文字的位置
+            //一の位
+            //int.Parseは文字を数値化する
+            //Substring数値文字の位置を取る
             GameOverLevelImages[1].sprite = NumberSprite[int.Parse(StaticObj.LevelID.ToString().Substring(1, 1))];
             #endregion
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    //計算分數
+    //点数を計算する
     public void Score(bool MonsterState) {
-        //MonsterState =true 為Boss,MonsterState =false 為NPC
+        //MonsterState =trueはBossの点数,MonsterState =falseはモンスター(NPC)
         if (MonsterState)
         {
             TotalScore += AddBossScore;
@@ -111,35 +115,33 @@ public class ControlUI : MonoBehaviour
         else {
             TotalScore += AddNPCScore;
         }
-        //判斷ScoreImagePrefab階層下是否有物件，如果有物件就要先清除，再重新將分數顯示
-        //ScoreImagePrefab.Count抓取list數量
+        //点数の画像素材内容を初期化     
         if (ScoreImagePrefab.Count > 0) {
             for (int i = 0; i < ScoreImagePrefab.Count; i++) {
-                //將List階層下的物件刪除
+                //リストの中身を消す(初期化のため)
                 Destroy(ScoreImagePrefab[i].gameObject);
             }
-            //清除List長度資料
             ScoreImagePrefab.Clear();
         }
-        //使用for迴圈增加分數的圖片物件
+        //点数を(プレハブ)作る
         for (int j = 0; j < TotalScore.ToString().Length; j++) {
-            //動態生成出來的分數物件存在List中
+            //生成されたオブジェクトをリストに
             ScoreImagePrefab.Add(Instantiate(ScoreObj) as GameObject);
-            //將List中的物件移動到分數的父物件下
+            //リストの中にオブジェクトをスコアの子供にする
             ScoreImagePrefab[j].transform.parent = ScoreParentObj.transform;
-            //將生成出來的物件開啟
+            //生成したプレハブを表示
             ScoreImagePrefab[j].SetActive(true);
         }
-        //使用for迴圈將數字圖片帶入到List物件中
+        //数字の画像をスコア欄に代入
         for (int id = 0; id < TotalScore.ToString().Length; id++) {
             ScoreImagePrefab[id].GetComponent<Image>().sprite = NumberSprite[int.Parse(TotalScore.ToString().Substring(id, 1))];
         }
     }
 
-    //遊戲結束的分數
+    //ゲームオバー
     public void GameOver(bool GameState) {
         GameOverUI.SetActive(true);
-        //GameState=true 玩家勝利,Boss死亡 GameState=false玩家失敗 玩家血量=0
+        //GameState=true はプレイヤーが勝利した場合,Boss死亡 GameState=falseはプレイヤーが失敗した場合
         if (GameState)
         {
             AwardScriptScore = AwardScore;
@@ -152,15 +154,15 @@ public class ControlUI : MonoBehaviour
     }
 
     IEnumerator JumpNumber(int ScoreNum,int ScoreState) {
-        //一個區間要跳多少數值
+        //点数を加算する時加算動画を何回再生する
         int delta = ScoreNum / ScoreJump;
-        //將結果值歸0
+        //表示する点数は0から加算ため初期化する
         ScoreResult = 0;
-        //依造執行次數，使用for迴圈讓分數累加
+        //点数を加算
         for (int i = 0; i < ScoreJump; i++) {
-            //累加區間的獎勵值
+           //一回加算する値
             ScoreResult += delta;
-            //獎勵分數顯示圖片
+            //ボーナス点数画像を表示
             if (ScoreState == 0)
             {
                 AwardScoreImage();
@@ -169,10 +171,10 @@ public class ControlUI : MonoBehaviour
             {
                 TotalScoreImage();
             }
-            //加完一次區間值等待0.1秒再加上另外一個區間數值
+            //0.1秒毎に加算する
             yield return new WaitForSeconds(0.1f);
         }
-        //限定分數最後的數值
+        //最終的点数を確定する
         ScoreResult = ScoreNum;
 
         if (ScoreState == 0)
@@ -188,54 +190,56 @@ public class ControlUI : MonoBehaviour
 
     }
     void AwardScoreImage() {
+        //ボーナス点数を初期化する
         if (AwardScoreImagePrefab.Count > 0)
         {
             for (int i = 0; i < AwardScoreImagePrefab.Count; i++)
             {
-                //將List階層下的物件刪除
+                
                 Destroy(AwardScoreImagePrefab[i].gameObject);
             }
-            //清除List長度資料
+            
             AwardScoreImagePrefab.Clear();
         }
-        //使用for迴圈增加分數的圖片物件
+        //点数を(プレハブ)作る
         for (int j = 0; j < ScoreResult.ToString().Length; j++)
         {
-            //動態生成出來的分數物件存在List中
+            //生成されたオブジェクトをリストに
             AwardScoreImagePrefab.Add(Instantiate(ScoreObj) as GameObject);
-            //將List中的物件移動到分數的父物件下
+            //リストの中にオブジェクトをスコアの子供にする
             AwardScoreImagePrefab[j].transform.parent = AwardScoreParentObj.transform;
-            //將生成出來的物件開啟
+            //生成したプレハブを表示
             AwardScoreImagePrefab[j].SetActive(true);
         }
-        //使用for迴圈將數字圖片帶入到List物件中
+        //数字の画像をスコア欄に代入
         for (int id = 0; id < ScoreResult.ToString().Length; id++)
         {
             AwardScoreImagePrefab[id].GetComponent<Image>().sprite = NumberSprite[int.Parse(ScoreResult.ToString().Substring(id, 1))];
         }
     }
     void TotalScoreImage() {
+        //総点数を初期化する
         if (TotalScoreImagePrefab.Count > 0)
         {
             for (int i = 0; i < TotalScoreImagePrefab.Count; i++)
             {
-                //將List階層下的物件刪除
+                
                 Destroy(TotalScoreImagePrefab[i].gameObject);
             }
-            //清除List長度資料
+            
             TotalScoreImagePrefab.Clear();
         }
-        //使用for迴圈增加分數的圖片物件
+        //点数を(プレハブ)作る
         for (int j = 0; j < ScoreResult.ToString().Length; j++)
         {
-            //動態生成出來的分數物件存在List中
+            //生成されたオブジェクトをリストに
             TotalScoreImagePrefab.Add(Instantiate(ScoreObj) as GameObject);
-            //將List中的物件移動到分數的父物件下
+            //リストの中にオブジェクトをスコアの子供にする
             TotalScoreImagePrefab[j].transform.parent = GameOverParentObj.transform;
-            //將生成出來的物件開啟
+            //生成したプレハブを表示
             TotalScoreImagePrefab[j].SetActive(true);
         }
-        //使用for迴圈將數字圖片帶入到List物件中
+        //数字の画像をスコア欄に代入
         for (int id = 0; id < ScoreResult.ToString().Length; id++)
         {
             TotalScoreImagePrefab[id].GetComponent<Image>().sprite = NumberSprite[int.Parse(ScoreResult.ToString().Substring(id, 1))];

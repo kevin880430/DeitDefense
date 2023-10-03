@@ -7,30 +7,33 @@ using UnityEngine.UI;
 using Proyecto26;
 public class Register : MonoBehaviour
 {
+    //アカウント入力
     [Header("帳號輸入框")]
     public InputField AccInputField;
+    //パスワード入力
     [Header("密碼輸入框")]
     public InputField PasswordInputField;
+    //メッセージ提示
     [Header("提示訊息文字")]
     public Text Message;
 
-    //下載Firebase資料到Unity 資料格式
+    //FirebaseのデータをUnityにダウンロード
     User DownloadData = new User();
-
+    //Sign upページ
     [Header("註冊頁面")]
     public GameObject RegisterUI;
+    //ログインページ
     [Header("登入頁面")]
     public GameObject LoginUI;
 
-    // Start is called before the first frame update
     void Start()
     {
-        //遊戲一開始時，將訊息內的文字清空
+        //メッセージを初期化
         Message.text = "";
     }
     public void OnSubmit() {
         Message.text = "";
-        //透過使用者帳號至Firebase找尋資料並帶回Unity
+        ////ユーザーアカウントによってFirebaseからデータを取得
         RestClient.Get<User>("https://secondgame202204-default-rtdb.firebaseio.com/" + AccInputField.text + ".json").Then(
             response => {
                 DownloadData = response;
@@ -39,7 +42,7 @@ public class Register : MonoBehaviour
         StartCoroutine(Wait(1f));
        // StaticObj.UserAcc = AccInputField.text;
        // StaticObj.UserPassword = PasswordInputField.text;
-        //將使用者資料傳回Firebase
+        //ユーザーデータををFirebaseに送る
         //PostToFirebase();
     }
     IEnumerator Wait(float WaitTime) {
@@ -56,9 +59,9 @@ public class Register : MonoBehaviour
         }
     }
     void PostToFirebase() {
-        //使用User資料排序的方式
+        //ユーザーデータを配列
         User UploadData = new User();
-        //上傳資料到Firebase
+        //Firebaseにアップロード
         RestClient.Put("https://secondgame202204-default-rtdb.firebaseio.com/" + AccInputField.text + ".json", UploadData);
     }
     public void Back() {

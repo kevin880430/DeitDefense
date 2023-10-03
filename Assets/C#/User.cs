@@ -4,15 +4,15 @@ using UnityEngine;
 
 using System;
 
-//序列化
+//直列化
 [Serializable]
 public class User
 {
-    //使用者帳號
+    //ユーザーアカウント
     public string UserAcc;
-    //使用者密碼
+    //ユーザーパスワード
     public string UserPassword;
-    //統一上傳與接收格式
+    //フォマードを統一
     public User() {
         UserAcc = StaticObj.UserAcc;
         UserPassword = StaticObj.UserPassword;
